@@ -157,7 +157,7 @@ button { font: inherit; color: inherit; }
 .toggle-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 10px 0; border-bottom: 1px solid var(--line); }
 .toggle-row:last-child { border-bottom: 0; }
 .switch { position: relative; width: 51px; height: 31px; flex: none; }
-.switch input { position: absolute; inset: 0; opacity: 0; margin: 0; cursor: pointer; z-index: 1; }
+.switch input { position: absolute; top: 0; left: 0; width: 100%; height: 100%; -webkit-appearance: none; appearance: none; opacity: 0; margin: 0; padding: 0; border: 0; cursor: pointer; z-index: 1; }
 .switch span { position: absolute; inset: 0; border-radius: 99px; background: #39393d; transition: background .2s; }
 .switch span::after { content: ""; position: absolute; top: 2px; left: 2px; width: 27px; height: 27px; border-radius: 99px; background: #fff; transition: transform .2s; box-shadow: 0 2px 4px rgba(0,0,0,.3); }
 .switch input:checked + span { background: var(--accent); }
@@ -1098,7 +1098,7 @@ function updateSoundDot() { $('[data-open="sounds"]').classList.toggle("live", O
 const soundList = $("#soundList");
 SOUNDS.forEach(s => {
   const row = document.createElement("div"); row.className = "sound off";
-  row.innerHTML = `<div><div class="name">${s.name}</div><div class="desc">${s.desc}</div></div>
+  row.innerHTML = `<label for="sw-${s.id}" style="cursor:pointer"><div class="name">${s.name}</div><div class="desc">${s.desc}</div></label>
     <span class="switch"><input type="checkbox" id="sw-${s.id}" aria-label="${s.name}"><span></span></span>
     <input type="range" min="0" max="100" value="${vols[s.id]}" id="vol-${s.id}" aria-label="${s.name} volume">`;
   soundList.appendChild(row);

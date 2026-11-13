@@ -258,7 +258,9 @@ ul.items:empty { display: none; }
 
 /* ---------- Festive themes ---------- */
 #decor { position: fixed; inset: 0; pointer-events: none; z-index: 0; overflow: hidden; }
-#decor.still .fx-bulb { animation: none; }
+#decor.still .fx-bulb, #decor.still .fx-star svg { animation: none; }
+.fx-star svg { animation: starglint 3.8s ease-in-out infinite alternate; }
+@keyframes starglint { from { opacity: .82; filter: drop-shadow(0 0 0 rgba(243,217,164,0)); } to { opacity: 1; filter: drop-shadow(0 0 5px rgba(243,217,164,.55)); } }
 .fx { position: absolute; }
 .fx-frame { inset: calc(18px + env(safe-area-inset-top)) 18px calc(18px + env(safe-area-inset-bottom)); border-radius: 30px; }
 .fx-frame2 { inset: calc(27px + env(safe-area-inset-top)) 27px calc(27px + env(safe-area-inset-bottom)); border-radius: 22px; border: 1px solid var(--accent); opacity: .45; }
@@ -291,7 +293,7 @@ body.theme-frosted .chip.on { background: #e9f0f7; color: #0e1620; }
 
 @media (prefers-reduced-motion: reduce) {
   .sheet, #dock, .item .content { transition: none; }
-  .fx-bulb, .fx-fall, .fx-fall i { animation: none !important; }
+  .fx-bulb, .fx-fall, .fx-fall i, .fx-star svg { animation: none !important; }
 }
 </style>
 </head>
@@ -1500,7 +1502,7 @@ $$(".fstyle").forEach(b => b.addEventListener("click", () => { settings.festiveS
 applyTheme();
 
 // Home Screen web apps can hold on to an old copy. Check for a newer version on launch and when reopened.
-const APP_VERSION = "20261113161813";
+const APP_VERSION = "20261113162114";
 async function checkForUpdate() {
   try {
     const r = await fetch(location.pathname + "?check=" + Date.now(), { cache: "no-store" });

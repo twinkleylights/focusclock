@@ -366,7 +366,7 @@ body.theme-frosted .chip.on { background: #e9f0f7; color: #0e1620; }
     </div>
     <p class="section-label">Background sounds</p>
     <div id="soundList"></div>
-    <p class="muted">Everything here is synthesized in the browser as it plays, so it is royalty-free and never loops the same way twice. On iPhone or iPad, if nothing plays, check that the silent switch or Focus mode isn't muting the browser.</p>
+    <p class="muted">Everything here is synthesized in the browser as it plays, so it is royalty-free and never loops the same way twice.</p>
   </div>
 </aside>
 
@@ -397,14 +397,13 @@ body.theme-frosted .chip.on { background: #e9f0f7; color: #0e1620; }
       <div class="toggle-row"><label for="h24">24-hour time</label><span class="switch"><input type="checkbox" id="h24"><span></span></span></div>
       <div class="toggle-row"><label for="showSec">Show seconds</label><span class="switch"><input type="checkbox" id="showSec"><span></span></span></div>
       <div class="toggle-row"><label for="keepAwake">Keep the screen awake</label><span class="switch"><input type="checkbox" id="keepAwake"><span></span></span></div>
-      <div class="toggle-row"><label for="festive">Festive theme<br><span class="muted">Seasonal border and touches; the clock stays the same</span></label><span class="switch"><input type="checkbox" id="festive"><span></span></span></div>
+      <div class="toggle-row"><label for="festive">Festive theme<br><span class="muted">Seasonal border and accents.</span></label><span class="switch"><input type="checkbox" id="festive"><span></span></span></div>
     </div>
     <div class="fstyles" id="fstyles" role="radiogroup" aria-label="Festive style">
       <button class="fstyle" role="radio" data-style="evergreen"><span class="sw"><i style="background:#2c4a35"></i><i style="background:#c9a063"></i><i style="background:#b3362f"></i></span><span><b>Evergreen</b><small>Pine frame, holly corners, brass star</small></span></button>
       <button class="fstyle" role="radio" data-style="lights"><span class="sw"><i style="background:#ffb347"></i><i style="background:#ff5e57"></i><i style="background:#57d18a"></i><i style="background:#5aa9ff"></i></span><span><b>String lights</b><small>Softly twinkling bulbs along the top</small></span></button>
       <button class="fstyle" role="radio" data-style="frosted"><span class="sw"><i style="background:#eef4fa"></i><i style="background:#a9c7e8"></i><i style="background:#dfe8f1"></i></span><span><b>Frosted</b><small>Slowly falling snow, snow-capped cards</small></span></button>
     </div>
-    <p class="muted">Tap anywhere on the clock to bring back the toolbar. It hides itself after a few seconds.</p>
   </div>
 </aside>
 
@@ -1492,7 +1491,7 @@ $$(".fstyle").forEach(b => b.addEventListener("click", () => { settings.festiveS
 applyTheme();
 
 // Home Screen web apps can hold on to an old copy. Check for a newer version on launch and when reopened.
-const APP_VERSION = "20261113140431";
+const APP_VERSION = "20261113140713";
 async function checkForUpdate() {
   try {
     const r = await fetch(location.pathname + "?check=" + Date.now(), { cache: "no-store" });

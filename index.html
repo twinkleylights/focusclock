@@ -397,7 +397,6 @@ body.theme-frosted .chip.on { background: #e9f0f7; color: #0e1620; }
       <div class="toggle-row"><label for="h24">24-hour time</label><span class="switch"><input type="checkbox" id="h24"><span></span></span></div>
       <div class="toggle-row"><label for="showSec">Show seconds</label><span class="switch"><input type="checkbox" id="showSec"><span></span></span></div>
       <div class="toggle-row"><label for="keepAwake">Keep the screen awake</label><span class="switch"><input type="checkbox" id="keepAwake"><span></span></span></div>
-      <div class="toggle-row"><label for="mixAudio">Mix with other audio<br><span class="muted">Lets these sounds play alongside Apple Music or other apps on iPhone and iPad</span></label><span class="switch"><input type="checkbox" id="mixAudio"><span></span></span></div>
       <div class="toggle-row"><label for="festive">Festive theme<br><span class="muted">Seasonal border and touches; the clock stays the same</span></label><span class="switch"><input type="checkbox" id="festive"><span></span></span></div>
     </div>
     <div class="fstyles" id="fstyles" role="radiogroup" aria-label="Festive style">
@@ -430,11 +429,11 @@ const toastEl = $("#toast"); let toastT;
 function toast(msg) { toastEl.textContent = msg; toastEl.classList.add("show"); clearTimeout(toastT); toastT = setTimeout(() => toastEl.classList.remove("show"), 2800); }
 
 /* ================= Settings ================= */
-const settings = Object.assign({ h24: false, showSec: false, keepAwake: true, autoNext: false, timerOnClock: true, mixAudio: true, festive: false, festiveStyle: "evergreen" }, store.get("settings", {}));
+const settings = Object.assign({ h24: false, showSec: false, keepAwake: true, autoNext: false, timerOnClock: true, festive: false, festiveStyle: "evergreen" }, store.get("settings", {}));
 function saveSettings() { store.set("settings", settings); }
-["h24", "showSec", "keepAwake", "autoNext", "timerOnClock", "mixAudio", "festive"].forEach(k => {
+["h24", "showSec", "keepAwake", "autoNext", "timerOnClock", "festive"].forEach(k => {
   const el = $("#" + k); el.checked = !!settings[k];
-  el.addEventListener("change", () => { settings[k] = el.checked; saveSettings(); if (k === "keepAwake") updateWake(); if (k === "mixAudio") applyAudioSession(); if (k === "festive") applyTheme(); renderDisplay(true); });
+  el.addEventListener("change", () => { settings[k] = el.checked; saveSettings(); if (k === "keepAwake") updateWake(); if (k === "festive") applyTheme(); renderDisplay(true); });
 });
 
 /* ================= Flip cards ================= */
@@ -709,8 +708,7 @@ function setMuted(m) {
 muteBtn.addEventListener("click", () => setMuted(!muted));
 document.addEventListener("keydown", e => { if ((e.key === "m" || e.key === "M") && !/INPUT|TEXTAREA/.test(document.activeElement.tagName)) setMuted(!muted); });
 function applyAudioSession() {
-  // "ambient" mixes with other apps' audio (e.g. Apple Music); "playback" takes over the speakers.
-  try { if (navigator.audioSession) navigator.audioSession.type = settings.mixAudio ? "ambient" : "playback"; } catch {}
+  try { if (navigator.audioSession) navigator.audioSession.type = "playback"; } catch {}
 }
 function volNode(id) {
   if (!volNodes[id]) { const g = ctx.createGain(); g.gain.value = Math.pow(vols[id] / 100, 1.6); g.connect(master); volNodes[id] = g; }
@@ -1493,6 +1491,18 @@ function applyTheme() {
 $$(".fstyle").forEach(b => b.addEventListener("click", () => { settings.festiveStyle = b.dataset.style; saveSettings(); applyTheme(); }));
 applyTheme();
 
+// Home Screen web apps can hold on to an old copy. Check for a newer version on launch and when reopened.
+const APP_VERSION = "20261113140431";
+async function checkForUpdate() {
+  try {
+    const r = await fetch(location.pathname + "?check=" + Date.now(), { cache: "no-store" });
+    if (!r.ok) return;
+    const m = (await r.text()).match(/const APP_VERSION = "(\d+)"/);
+    if (m && Number(m[1]) > Number(APP_VERSION)) location.reload(); // only ever move forward
+  } catch {}
+}
+checkForUpdate();
+document.addEventListener("visibilitychange", () => { if (!document.hidden) checkForUpdate(); });
 /* ================= Boot ================= */
 // Opened from the Home Screen it already fills the screen, so the full-screen button isn't needed.
 if (navigator.standalone || matchMedia("(display-mode: standalone)").matches) fsBtn.remove();

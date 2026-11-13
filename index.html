@@ -258,6 +258,7 @@ ul.items:empty { display: none; }
 
 /* ---------- Festive themes ---------- */
 #decor { position: fixed; inset: 0; pointer-events: none; z-index: 0; overflow: hidden; }
+#decor.still .fx-bulb { animation: none; }
 .fx { position: absolute; }
 .fx-frame { inset: calc(18px + env(safe-area-inset-top)) 18px calc(18px + env(safe-area-inset-bottom)); border-radius: 30px; }
 .fx-frame2 { inset: calc(27px + env(safe-area-inset-top)) 27px calc(27px + env(safe-area-inset-bottom)); border-radius: 22px; border: 1px solid var(--accent); opacity: .45; }
@@ -400,9 +401,10 @@ body.theme-frosted .chip.on { background: #e9f0f7; color: #0e1620; }
       <div class="toggle-row"><label for="festive">Festive theme<br><span class="muted">Seasonal border and accents.</span></label><span class="switch"><input type="checkbox" id="festive"><span></span></span></div>
     </div>
     <div class="fstyles" id="fstyles" role="radiogroup" aria-label="Festive style">
-      <button class="fstyle" role="radio" data-style="evergreen"><span class="sw"><i style="background:#2c4a35"></i><i style="background:#c9a063"></i><i style="background:#b3362f"></i></span><span><b>Evergreen</b><small>Pine frame, holly corners, brass star</small></span></button>
+      <button class="fstyle" role="radio" data-style="evergreen"><span class="sw"><i style="background:#2c4a35"></i><i style="background:#c9a063"></i><i style="background:#b3362f"></i></span><span><b>Evergreen</b><small>Pine frame, holly, brass star, falling snow</small></span></button>
       <button class="fstyle" role="radio" data-style="lights"><span class="sw"><i style="background:#ffb347"></i><i style="background:#ff5e57"></i><i style="background:#57d18a"></i><i style="background:#5aa9ff"></i></span><span><b>String lights</b><small>Softly twinkling bulbs along the top</small></span></button>
       <button class="fstyle" role="radio" data-style="frosted"><span class="sw"><i style="background:#eef4fa"></i><i style="background:#a9c7e8"></i><i style="background:#dfe8f1"></i></span><span><b>Frosted</b><small>Slowly falling snow, snow-capped cards</small></span></button>
+      <div class="toggle-row"><label for="festiveAnim">Animation</label><span class="switch"><input type="checkbox" id="festiveAnim"><span></span></span></div>
     </div>
   </div>
 </aside>
@@ -428,11 +430,11 @@ const toastEl = $("#toast"); let toastT;
 function toast(msg) { toastEl.textContent = msg; toastEl.classList.add("show"); clearTimeout(toastT); toastT = setTimeout(() => toastEl.classList.remove("show"), 2800); }
 
 /* ================= Settings ================= */
-const settings = Object.assign({ h24: false, showSec: false, keepAwake: true, autoNext: false, timerOnClock: true, festive: false, festiveStyle: "evergreen" }, store.get("settings", {}));
+const settings = Object.assign({ h24: false, showSec: false, keepAwake: true, autoNext: false, timerOnClock: true, festive: false, festiveStyle: "evergreen", festiveAnim: true }, store.get("settings", {}));
 function saveSettings() { store.set("settings", settings); }
-["h24", "showSec", "keepAwake", "autoNext", "timerOnClock", "festive"].forEach(k => {
+["h24", "showSec", "keepAwake", "autoNext", "timerOnClock", "festive", "festiveAnim"].forEach(k => {
   const el = $("#" + k); el.checked = !!settings[k];
-  el.addEventListener("change", () => { settings[k] = el.checked; saveSettings(); if (k === "keepAwake") updateWake(); if (k === "festive") applyTheme(); renderDisplay(true); });
+  el.addEventListener("change", () => { settings[k] = el.checked; saveSettings(); if (k === "keepAwake") updateWake(); if (k === "festive" || k === "festiveAnim") applyTheme(); renderDisplay(true); });
 });
 
 /* ================= Flip cards ================= */
@@ -1449,10 +1451,23 @@ async function flush() {
 const decor = $("#decor");
 const HOLLY_POS = [["left:6px;top:calc(4px + env(safe-area-inset-top))", -35], ["right:6px;top:calc(4px + env(safe-area-inset-top))", 35],
   ["left:6px;bottom:calc(4px + env(safe-area-inset-bottom))", -145], ["right:6px;bottom:calc(4px + env(safe-area-inset-bottom))", 145]];
+function snowfall(inset) {
+  // falling snow, clipped to the inside of the theme's frame
+  let h = `<div class="fx" style="inset:calc(${inset}px + env(safe-area-inset-top)) ${inset}px calc(${inset}px + env(safe-area-inset-bottom));border-radius:${inset > 20 ? 22 : 30}px;overflow:hidden">`;
+  for (let n = 0; n < 80; n++) {
+    const s = [2, 2, 3, 3, 3, 4, 5, 6][Math.floor(Math.random() * 8)], dur = (16 + Math.random() * 18) * (s <= 3 ? 1.25 : 1);
+    h += `<div class="fx fx-fall" style="left:${(Math.random() * 100).toFixed(2)}%;animation-duration:${dur.toFixed(1)}s;animation-delay:${(-Math.random() * dur).toFixed(1)}s">` +
+      `<i style="width:${s}px;height:${s}px;opacity:${(.3 + Math.random() * .55).toFixed(2)};${s >= 5 ? "filter:blur(.6px);" : ""}animation-duration:${(3 + Math.random() * 4).toFixed(1)}s"></i></div>`;
+  }
+  return h + "</div>";
+}
 function buildDecor(style) {
+  const anim = settings.festiveAnim;
+  decor.classList.toggle("still", !anim);
   let h = "";
   if (style === "evergreen") {
     h += '<div class="fx fx-frame" style="border:2px solid #24392b"></div><div class="fx fx-frame2"></div>';
+    if (anim) h += snowfall(28);
     HOLLY_POS.forEach(([pos, rot]) => { h += `<div class="fx fx-holly" style="${pos};transform:rotate(${rot}deg)"></div>`; });
     h += '<div class="fx fx-star"><div style="width:1px;height:46px;background:var(--accent);opacity:.6"></div>' +
       '<svg width="40" height="40" viewBox="0 0 40 40"><polygon points="20,2 24.7,14.6 38,15 27.5,23.3 31.2,36.3 20,28.6 8.8,36.3 12.5,23.3 2,15 15.3,14.6" fill="#c9a063" stroke="#7d6036" stroke-width="1"/></svg></div>';
@@ -1469,13 +1484,7 @@ function buildDecor(style) {
     h += '<div class="fx" style="left:0;right:0;bottom:0;height:200px;background:radial-gradient(ellipse at 50% 120%, rgba(255,179,71,.10), rgba(0,0,0,0) 65%)"></div>';
   } else if (style === "frosted") {
     h += '<div class="fx fx-frame" style="border:1px solid #a9c7e8;opacity:.55"></div>';
-    h += '<div class="fx fx-frame" style="overflow:hidden">'; // snow stays inside the border
-    for (let n = 0; n < 80; n++) {
-      const s = [2, 2, 3, 3, 3, 4, 5, 6][Math.floor(Math.random() * 8)], dur = (16 + Math.random() * 18) * (s <= 3 ? 1.25 : 1);
-      h += `<div class="fx fx-fall" style="left:${(Math.random() * 100).toFixed(2)}%;animation-duration:${dur.toFixed(1)}s;animation-delay:${(-Math.random() * dur).toFixed(1)}s">` +
-        `<i style="width:${s}px;height:${s}px;opacity:${(.3 + Math.random() * .55).toFixed(2)};${s >= 5 ? "filter:blur(.6px);" : ""}animation-duration:${(3 + Math.random() * 4).toFixed(1)}s"></i></div>`;
-    }
-    h += '</div>';
+    if (anim) h += snowfall(19);
   }
   decor.innerHTML = h;
 }
@@ -1491,7 +1500,7 @@ $$(".fstyle").forEach(b => b.addEventListener("click", () => { settings.festiveS
 applyTheme();
 
 // Home Screen web apps can hold on to an old copy. Check for a newer version on launch and when reopened.
-const APP_VERSION = "20261113140713";
+const APP_VERSION = "20261113161813";
 async function checkForUpdate() {
   try {
     const r = await fetch(location.pathname + "?check=" + Date.now(), { cache: "no-store" });

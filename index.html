@@ -42,7 +42,7 @@ button { font: inherit; color: inherit; }
 
 /* ---------- Clock ---------- */
 #stage {
-  position: fixed; inset: 0; display: flex; flex-direction: column;
+  position: fixed; inset: 0; z-index: 1; display: flex; flex-direction: column;
   align-items: center; justify-content: center; gap: 2.2vh;
   padding: env(safe-area-inset-top) 16px env(safe-area-inset-bottom);
 }
@@ -59,7 +59,7 @@ button { font: inherit; color: inherit; }
   position: relative; width: var(--c); height: calc(var(--c) * .94);
   border-radius: calc(var(--c) * .075); perspective: calc(var(--c) * 4);
   font-family: var(--f-display); font-weight: 700; color: var(--digit);
-  font-size: calc(var(--c) * .70); letter-spacing: -.02em;
+  font-size: calc(var(--c) * .67); letter-spacing: -.02em;
   font-variant-numeric: tabular-nums;
 }
 .half, .flap {
@@ -86,14 +86,14 @@ button { font: inherit; color: inherit; }
   transform: translateY(-50%); background: var(--bg); z-index: 3;
 }
 .ampm {
-  position: absolute; z-index: 4; left: calc(var(--c) * .06); top: calc(var(--c) * .06);
-  font-family: var(--f-display); font-size: calc(var(--c) * .065); font-weight: 600; color: var(--ui); letter-spacing: .02em;
+  position: absolute; z-index: 4; left: calc(var(--c) * .045); top: calc(var(--c) * .037);
+  font-family: var(--f-display); font-size: calc(var(--c) * .05); font-weight: 600; color: #7a7a7a; letter-spacing: .04em;
 }
 
 /* ---------- Dock ---------- */
 #dock {
   position: fixed; left: 50%; bottom: calc(18px + env(safe-area-inset-bottom)); transform: translateX(-50%);
-  display: flex; gap: 6px; padding: 6px; border-radius: 999px; background: rgba(22,22,22,.85);
+  display: flex; gap: 6px; padding: 6px; border-radius: 999px; background: var(--dock, rgba(22,22,22,.85));
   border: 1px solid var(--line); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
   transition: opacity .5s ease, transform .5s ease; z-index: 20;
 }
@@ -133,7 +133,7 @@ button { font: inherit; color: inherit; }
 
 .seg { display: flex; background: #1f1f1f; border-radius: 12px; padding: 3px; gap: 3px; }
 .seg button { flex: 1; border: 0; background: transparent; padding: 9px 6px; border-radius: 9px; color: var(--ui); cursor: pointer; font-size: 14px; }
-.seg button.on { background: #333; color: var(--ui-strong); }
+.seg button.on { background: var(--seg-on, #333); color: var(--ui-strong); }
 
 .btn { border: 1px solid var(--line); background: #1f1f1f; padding: 11px 16px; border-radius: 12px; cursor: pointer; font-size: 15px; font-weight: 500; }
 .btn:hover { background: #2a2a2a; }
@@ -256,13 +256,47 @@ ul.items:empty { display: none; }
 }
 #toast.show { opacity: 1; transform: translate(-50%, 0); }
 
+/* ---------- Festive themes ---------- */
+#decor { position: fixed; inset: 0; pointer-events: none; z-index: 0; overflow: hidden; }
+.fx { position: absolute; }
+.fx-frame { inset: calc(18px + env(safe-area-inset-top)) 18px calc(18px + env(safe-area-inset-bottom)); border-radius: 30px; }
+.fx-frame2 { inset: calc(27px + env(safe-area-inset-top)) 27px calc(27px + env(safe-area-inset-bottom)); border-radius: 22px; border: 1px solid var(--accent); opacity: .45; }
+.fx-holly { width: 74px; height: 54px; background: url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 74 54%22%3E%3Cpath d=%22M37 30 C29 18 15 15 4 20 C11 23 12 28 9 33 C17 31 22 35 23 43 C29 37 33 36 37 30Z%22 fill=%22%232c4a35%22/%3E%3Cpath d=%22M37 30 C45 18 59 15 70 20 C63 23 62 28 65 33 C57 31 52 35 51 43 C45 37 41 36 37 30Z%22 fill=%22%23355a40%22/%3E%3Ccircle cx=%2233%22 cy=%2231%22 r=%225%22 fill=%22%23a8322d%22/%3E%3Ccircle cx=%2241%22 cy=%2231%22 r=%225%22 fill=%22%23bf3b34%22/%3E%3Ccircle cx=%2237%22 cy=%2224%22 r=%225%22 fill=%22%23b3362f%22/%3E%3C/svg%3E") no-repeat center / contain; }
+.fx-star { left: 50%; top: calc(27px + env(safe-area-inset-top)); transform: translateX(-50%); display: flex; flex-direction: column; align-items: center; }
+.fx-bulb { width: 12px; height: 18px; margin-left: -6px; border-radius: 50% 50% 45% 45%; animation: twinkle ease-in-out infinite alternate; }
+@keyframes twinkle { 0% { opacity: 1; } 100% { opacity: .32; } }
+.fx-fall { top: -12px; animation: fall linear infinite; will-change: transform; }
+.fx-fall i { display: block; border-radius: 50%; background: #eef4fa; animation: sway ease-in-out infinite alternate; }
+@keyframes fall { from { transform: translateY(0); } to { transform: translateY(calc(100vh + 24px)); } }
+@keyframes sway { from { transform: translateX(-8px); } to { transform: translateX(8px); } }
+
+body.theme-evergreen { --accent: #c9a063; --line: #2c4433; --sheet: rgba(16,24,19,.95); --seg-on: #24392b; --dock: rgba(20,30,23,.9); }
+body.theme-lights { --accent: #ffb347; --line: #2e2a24; --seg-on: #3a2f20; --dock: rgba(22,22,22,.88); }
+body.theme-frosted { --accent: #a9c7e8; --line: #2a3340; --sheet: rgba(16,20,25,.95); --seg-on: #243040; --dock: rgba(20,24,30,.9); }
+body.theme-evergreen .dots i.done { background: #b3362f; }
+body.theme-evergreen .sheet-head h2::after { content: ""; display: inline-block; width: 34px; height: 24px; margin-left: 8px; vertical-align: -3px; background: url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 74 54%22%3E%3Cpath d=%22M37 30 C29 18 15 15 4 20 C11 23 12 28 9 33 C17 31 22 35 23 43 C29 37 33 36 37 30Z%22 fill=%22%232c4a35%22/%3E%3Cpath d=%22M37 30 C45 18 59 15 70 20 C63 23 62 28 65 33 C57 31 52 35 51 43 C45 37 41 36 37 30Z%22 fill=%22%23355a40%22/%3E%3Ccircle cx=%2233%22 cy=%2231%22 r=%225%22 fill=%22%23a8322d%22/%3E%3Ccircle cx=%2241%22 cy=%2231%22 r=%225%22 fill=%22%23bf3b34%22/%3E%3Ccircle cx=%2237%22 cy=%2224%22 r=%225%22 fill=%22%23b3362f%22/%3E%3C/svg%3E") no-repeat center / contain; }
+body.theme-lights .sheet::before { content: ""; position: absolute; left: 18px; right: 18px; top: 2px; height: 16px; background: url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 120 24%22%3E%3Cpath d=%22M0 4 Q30 14 60 4 T120 4%22 fill=%22none%22 stroke=%22%233a3a3a%22 stroke-width=%221%22/%3E%3Cellipse cx=%2215%22 cy=%2212%22 rx=%223%22 ry=%224.5%22 fill=%22%23ffb347%22/%3E%3Cellipse cx=%2245%22 cy=%2212%22 rx=%223%22 ry=%224.5%22 fill=%22%23ff5e57%22/%3E%3Cellipse cx=%2275%22 cy=%2212%22 rx=%223%22 ry=%224.5%22 fill=%22%2357d18a%22/%3E%3Cellipse cx=%22105%22 cy=%2212%22 rx=%223%22 ry=%224.5%22 fill=%22%235aa9ff%22/%3E%3C/svg%3E") repeat-x left top / 80px 16px; opacity: .9; }
+body.theme-frosted .sheet::before { content: ""; position: absolute; left: 0; right: 0; top: 0; height: 12px; background: url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 400 16%22 preserveAspectRatio=%22none%22%3E%3Cpath d=%22M0 0 H400 V6 C380 12 350 8 330 10 C300 14 270 8 240 11 C210 14 180 8 150 11 C120 14 90 9 60 11 C35 13 15 9 0 10 Z%22 fill=%22%23e9f0f7%22 opacity=%22.9%22/%3E%3C/svg%3E") no-repeat top / 100% 100%; }
+body.theme-frosted .card::before { content: ""; position: absolute; z-index: 5; left: 0; right: 0; top: calc(var(--c) * -.037); height: calc(var(--c) * .075); background: url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 372 30%22 preserveAspectRatio=%22none%22%3E%3Cpath d=%22M14 30 C14 14 34 12 52 15 C70 4 100 6 118 13 C140 3 176 5 196 14 C222 4 262 6 280 14 C304 6 340 8 358 18 C366 22 358 30 358 30 Z%22 fill=%22%23e9f0f7%22/%3E%3C/svg%3E") no-repeat top / 100% 100%; pointer-events: none; }
+body.theme-frosted .chip.on { background: #e9f0f7; color: #0e1620; }
+.fstyles { display: flex; flex-direction: column; gap: 8px; }
+.fstyles[hidden] { display: none; }
+.fstyle { display: flex; align-items: center; gap: 12px; width: 100%; text-align: left; padding: 10px 12px; border-radius: 12px; cursor: pointer; border: 1px solid var(--line); background: #1d1d1d; color: var(--ui-strong); font: inherit; }
+.fstyle.on { border-color: var(--accent); background: #262016; }
+.fstyle .sw { flex: none; width: 44px; height: 30px; border-radius: 7px; background: #050505; border: 1px solid #333; display: flex; align-items: center; justify-content: center; gap: 4px; }
+.fstyle .sw i { width: 6px; height: 6px; border-radius: 99px; }
+.fstyle b { display: block; font-size: 15px; font-weight: 500; }
+.fstyle small { display: block; font-size: 12.5px; color: var(--ui); }
+
 @media (prefers-reduced-motion: reduce) {
   .sheet, #dock, .item .content { transition: none; }
+  .fx-bulb, .fx-fall, .fx-fall i { animation: none !important; }
 }
 </style>
 </head>
 <body>
 
+<div id="decor" aria-hidden="true"></div>
 <main id="stage" aria-label="Clock">
   <button id="viewLabel" type="button" hidden></button>
   <div id="clock" class="clock" aria-live="off"></div>
@@ -363,6 +397,13 @@ ul.items:empty { display: none; }
       <div class="toggle-row"><label for="h24">24-hour time</label><span class="switch"><input type="checkbox" id="h24"><span></span></span></div>
       <div class="toggle-row"><label for="showSec">Show seconds</label><span class="switch"><input type="checkbox" id="showSec"><span></span></span></div>
       <div class="toggle-row"><label for="keepAwake">Keep the screen awake</label><span class="switch"><input type="checkbox" id="keepAwake"><span></span></span></div>
+      <div class="toggle-row"><label for="mixAudio">Mix with other audio<br><span class="muted">Lets these sounds play alongside Apple Music or other apps on iPhone and iPad</span></label><span class="switch"><input type="checkbox" id="mixAudio"><span></span></span></div>
+      <div class="toggle-row"><label for="festive">Festive theme<br><span class="muted">Seasonal border and touches; the clock stays the same</span></label><span class="switch"><input type="checkbox" id="festive"><span></span></span></div>
+    </div>
+    <div class="fstyles" id="fstyles" role="radiogroup" aria-label="Festive style">
+      <button class="fstyle" role="radio" data-style="evergreen"><span class="sw"><i style="background:#2c4a35"></i><i style="background:#c9a063"></i><i style="background:#b3362f"></i></span><span><b>Evergreen</b><small>Pine frame, holly corners, brass star</small></span></button>
+      <button class="fstyle" role="radio" data-style="lights"><span class="sw"><i style="background:#ffb347"></i><i style="background:#ff5e57"></i><i style="background:#57d18a"></i><i style="background:#5aa9ff"></i></span><span><b>String lights</b><small>Softly twinkling bulbs along the top</small></span></button>
+      <button class="fstyle" role="radio" data-style="frosted"><span class="sw"><i style="background:#eef4fa"></i><i style="background:#a9c7e8"></i><i style="background:#dfe8f1"></i></span><span><b>Frosted</b><small>Slowly falling snow, snow-capped cards</small></span></button>
     </div>
     <p class="muted">Tap anywhere on the clock to bring back the toolbar. It hides itself after a few seconds.</p>
   </div>
@@ -389,11 +430,11 @@ const toastEl = $("#toast"); let toastT;
 function toast(msg) { toastEl.textContent = msg; toastEl.classList.add("show"); clearTimeout(toastT); toastT = setTimeout(() => toastEl.classList.remove("show"), 2800); }
 
 /* ================= Settings ================= */
-const settings = Object.assign({ h24: false, showSec: false, keepAwake: true, autoNext: false, timerOnClock: true }, store.get("settings", {}));
+const settings = Object.assign({ h24: false, showSec: false, keepAwake: true, autoNext: false, timerOnClock: true, mixAudio: true, festive: false, festiveStyle: "evergreen" }, store.get("settings", {}));
 function saveSettings() { store.set("settings", settings); }
-["h24", "showSec", "keepAwake", "autoNext", "timerOnClock"].forEach(k => {
+["h24", "showSec", "keepAwake", "autoNext", "timerOnClock", "mixAudio", "festive"].forEach(k => {
   const el = $("#" + k); el.checked = !!settings[k];
-  el.addEventListener("change", () => { settings[k] = el.checked; saveSettings(); if (k === "keepAwake") updateWake(); renderDisplay(true); });
+  el.addEventListener("change", () => { settings[k] = el.checked; saveSettings(); if (k === "keepAwake") updateWake(); if (k === "mixAudio") applyAudioSession(); if (k === "festive") applyTheme(); renderDisplay(true); });
 });
 
 /* ================= Flip cards ================= */
@@ -644,7 +685,7 @@ const volNodes = {};
 const bufs = {};
 function ensureAudio() {
   if (!ctx) {
-    try { if (navigator.audioSession) navigator.audioSession.type = "playback"; } catch {}
+    applyAudioSession();
     const AC = window.AudioContext || window.webkitAudioContext;
     if (!AC) { toast("This browser can't play generated audio."); return null; }
     ctx = new AC();
@@ -667,6 +708,10 @@ function setMuted(m) {
 }
 muteBtn.addEventListener("click", () => setMuted(!muted));
 document.addEventListener("keydown", e => { if ((e.key === "m" || e.key === "M") && !/INPUT|TEXTAREA/.test(document.activeElement.tagName)) setMuted(!muted); });
+function applyAudioSession() {
+  // "ambient" mixes with other apps' audio (e.g. Apple Music); "playback" takes over the speakers.
+  try { if (navigator.audioSession) navigator.audioSession.type = settings.mixAudio ? "ambient" : "playback"; } catch {}
+}
 function volNode(id) {
   if (!volNodes[id]) { const g = ctx.createGain(); g.gain.value = Math.pow(vols[id] / 100, 1.6); g.connect(master); volNodes[id] = g; }
   return volNodes[id];
@@ -1402,6 +1447,51 @@ async function flush() {
     }, () => { clearTimeout(loadT); setSync(false, "Saved on this device only"); });
   } catch { setSync(false, "Saved on this device"); }
 })();
+
+/* ================= Festive theme ================= */
+const decor = $("#decor");
+const HOLLY_POS = [["left:6px;top:calc(4px + env(safe-area-inset-top))", -35], ["right:6px;top:calc(4px + env(safe-area-inset-top))", 35],
+  ["left:6px;bottom:calc(4px + env(safe-area-inset-bottom))", -145], ["right:6px;bottom:calc(4px + env(safe-area-inset-bottom))", 145]];
+function buildDecor(style) {
+  let h = "";
+  if (style === "evergreen") {
+    h += '<div class="fx fx-frame" style="border:2px solid #24392b"></div><div class="fx fx-frame2"></div>';
+    HOLLY_POS.forEach(([pos, rot]) => { h += `<div class="fx fx-holly" style="${pos};transform:rotate(${rot}deg)"></div>`; });
+    h += '<div class="fx fx-star"><div style="width:1px;height:46px;background:var(--accent);opacity:.6"></div>' +
+      '<svg width="40" height="40" viewBox="0 0 40 40"><polygon points="20,2 24.7,14.6 38,15 27.5,23.3 31.2,36.3 20,28.6 8.8,36.3 12.5,23.3 2,15 15.3,14.6" fill="#c9a063" stroke="#7d6036" stroke-width="1"/></svg></div>';
+  } else if (style === "lights") {
+    const segs = 8, top = 'calc(env(safe-area-inset-top))';
+    let d = "M0 22 "; for (let k = 0; k < segs; k++) d += `Q ${64 + 128 * k} 62 ${128 + 128 * k} 22 `;
+    h += `<svg class="fx" style="left:0;top:${top};width:100%;height:80px" viewBox="0 0 1024 80" preserveAspectRatio="none"><path d="${d}" fill="none" stroke="#2a2a2a" stroke-width="2" vector-effect="non-scaling-stroke"/></svg>`;
+    const cols = ["#ffb347", "#ff5e57", "#57d18a", "#5aa9ff", "#fff1c9"]; let i = 0;
+    for (let k = 0; k < segs; k++) for (const t of [.25, .5, .75]) {
+      const x = (128 * k + 128 * t) / 1024 * 100, y = 22 + 80 * t * (1 - t), c = cols[i % 5];
+      h += `<div class="fx fx-bulb" style="left:${x.toFixed(2)}%;top:calc(${Math.round(y)}px + env(safe-area-inset-top));background:${c};box-shadow:0 0 11px 4px ${c}88;animation-duration:${(2.6 + (i * 37 % 30) / 10).toFixed(1)}s;animation-delay:${(-(i * 53 % 50) / 10).toFixed(1)}s"></div>`;
+      i++;
+    }
+    h += '<div class="fx" style="left:0;right:0;bottom:0;height:200px;background:radial-gradient(ellipse at 50% 120%, rgba(255,179,71,.10), rgba(0,0,0,0) 65%)"></div>';
+  } else if (style === "frosted") {
+    h += '<div class="fx fx-frame" style="border:1px solid #a9c7e8;opacity:.55"></div>';
+    h += '<div class="fx fx-frame" style="overflow:hidden">'; // snow stays inside the border
+    for (let n = 0; n < 80; n++) {
+      const s = [2, 2, 3, 3, 3, 4, 5, 6][Math.floor(Math.random() * 8)], dur = (16 + Math.random() * 18) * (s <= 3 ? 1.25 : 1);
+      h += `<div class="fx fx-fall" style="left:${(Math.random() * 100).toFixed(2)}%;animation-duration:${dur.toFixed(1)}s;animation-delay:${(-Math.random() * dur).toFixed(1)}s">` +
+        `<i style="width:${s}px;height:${s}px;opacity:${(.3 + Math.random() * .55).toFixed(2)};${s >= 5 ? "filter:blur(.6px);" : ""}animation-duration:${(3 + Math.random() * 4).toFixed(1)}s"></i></div>`;
+    }
+    h += '</div>';
+  }
+  decor.innerHTML = h;
+}
+function applyTheme() {
+  const style = settings.festive ? settings.festiveStyle : "";
+  document.body.classList.remove("theme-evergreen", "theme-lights", "theme-frosted");
+  if (style) document.body.classList.add("theme-" + style);
+  buildDecor(style);
+  $("#fstyles").hidden = !settings.festive;
+  $$(".fstyle").forEach(b => { const on = b.dataset.style === settings.festiveStyle; b.classList.toggle("on", on); b.setAttribute("aria-checked", on); });
+}
+$$(".fstyle").forEach(b => b.addEventListener("click", () => { settings.festiveStyle = b.dataset.style; saveSettings(); applyTheme(); }));
+applyTheme();
 
 /* ================= Boot ================= */
 // Opened from the Home Screen it already fills the screen, so the full-screen button isn't needed.
